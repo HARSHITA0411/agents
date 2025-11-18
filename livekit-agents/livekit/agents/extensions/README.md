@@ -117,43 +117,54 @@ _user_input_transcribed_raw()
 ---
 
 ## 3. Known Issues / Edge Cases
-Issue	Description	Impact
-Partial filler detection	Some STT engines output phonemes like "uh-"	Might pass as non-filler
-Accented fillers	Non-English fillers not supported	Requires language-specific lists
-Fast interrupt phrases	If user says "uh stop..." very quickly	First filler may delay interrupt slightly
-Confidence scoring varies	Some STT providers send no confidence field	Uses fallback 1.0
 
-None of these break the agent, but may slightly reduce accuracy in rare cases.
+| Issue                     | Description                                               | Impact                                    |
+|--------------------------|-----------------------------------------------------------|--------------------------------------------|
+| Partial filler detection | Some STT engines output phonemes like `"uh-"`             | Might pass as non-filler                   |
+| Accented fillers         | Non-English filler words not included                     | Requires language-specific extension       |
+| Fast interrupt phrases   | User saying “uh stop…” very quickly                       | First filler may delay interruption slightly |
+| Confidence scoring varies | Some STT providers omit confidence scores                 | Fallback value may misclassify rare cases |
+
+These issues do not break the agent, but may affect accuracy in rare scenarios.
+
+---
 
 ## 4. Steps to Test the Implementation
-✔ Step 1 — Launch a test agent
+### Step 1 — Launch a test agent
 
 Example:
-
+``` bash
 python examples/voice_agents/basic_agent.py
-
+```
 
 Or with console mode:
 
+``` bash
 python myagent.py console
+```
 
-✔ Step 2 — Speak while AI is talking
+### Step 2 — Speak while the agent is talking
 
-Test the following phrases:
+| You Say        | Expected Behavior        |
+|----------------|---------------------------|
+| "uh..."        | ❌ No interruption        |
+| "umm..."       | ❌ No interruption        |
+| "hmm..."       | ❌ No interruption        |
+| breath noise   | ❌ No interruption        |
+| "hello?"       | ✔ Agent stops speaking   |
+| "wait wait"    | ✔ Agent interrupts       |
+| "stop"         | ✔ Instant interruption   |
 
-You Say	Expected Behavior
-"uh..."	❌ No interruption
-"umm..."	❌ No interruption
-"hmm..."	❌ No interruption
-Random breath sound	❌ No interruption
-"hello?"	✔ Agent stops and listens
-"wait wait"	✔ Agent stops
-"stop"	✔ Agent stops instantly
-✔ Step 3 — Test while AI is silent
-You Say	Expected
-"uh..."	✔ Sent to LLM normally
-Real speech	✔ Processed normally
-✔ Step 4 — Check logs (optional)
+---
+
+### Step 3 — Speak while the agent is silent
+
+| You Say | Expected Behavior         |
+|---------|----------------------------|
+| "uh..." |  Sent to NLU normally     |
+| Real speech  |  Processed normally       |
+
+### Step 4 — Check logs (optional)
 
 Enable logging to confirm TTS start/end signals.
 
