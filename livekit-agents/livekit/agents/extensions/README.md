@@ -1,60 +1,67 @@
-📄 README — Filler-Aware Interruption Handler for LiveKit Agents
+# Filler-Aware Interruption Handler for LiveKit Agents
+## Assignment Submission — Harshita
 
-Assignment Submission — Harshita
+## 1. What Changed (Overview of New Modules, Params, and Logic Added)
+### New Module Added
 
-📝 1. What Changed (Overview of New Modules, Params, and Logic Added)
-✅ New Module Added
-
+```
 livekit/agents/extensions/filler_interrupt_handler.py
+```
 
 This file implements a custom interruption handler that enhances the LiveKit voice agent by preventing accidental interruptions caused by:
 
-Filler words (uh, umm, hmm)
+- Filler words (uh, umm, hmm)
 
-Background mouth noises
+- Background mouth noises
 
-Low-confidence STT segments
+- Low-confidence STT segments
 
 The handler introduces:
 
-handle_transcript_segment() → Processes ASR + interruption logic
+- handle_transcript_segment() → Processes ASR + interruption logic
 
-on_tts_start() → Marks when the agent begins speaking
+- on_tts_start() → Marks when the agent begins speaking
 
-on_tts_end() → Marks when the agent stops speaking
+- on_tts_end() → Marks when the agent stops speaking
 
-InterruptConfig() → Threshold configs (confidence, filler lists, etc.)
+- InterruptConfig() → Threshold configs (confidence, filler lists, etc.)
 
-✅ Modifications to Existing File
+### Modifications to Existing File
 
+```
 livekit/agents/voice/agent_session.py
+```
 
 Integrated the custom handler into the agent pipeline.
 
 ✔ Added Import
+``` python
 from livekit.agents.extensions.filler_interrupt_handler import (
     FillerAwareInterruptHandler,
     InterruptConfig,
 )
-
+```
 ✔ Instantiated Handler
 
 Inside __init__():
-
+``` python
 self.interrupt_handler = FillerAwareInterruptHandler(InterruptConfig())
-
+```
 ✔ Hooked into Agent TTS State
 
 Inside _update_agent_state():
 
+``` python
 self.interrupt_handler.on_tts_start()
 ...
 self.interrupt_handler.on_tts_end()
+```
 
 ✔ Replaced Default STT Handling
 
 Overrode _user_input_transcribed() so all transcripts pass through the new logic:
 
+``` python
 self.interrupt_handler.handle_transcript_segment(
     text=text,
     confidence=confidence,
@@ -62,18 +69,20 @@ self.interrupt_handler.handle_transcript_segment(
     stop_agent_tts=stop_tts,
     forward_to_nlu=forward_to_nlu,
 )
-
+```
 
 Added helper for passing final text to LiveKit:
 
+``` python
 _user_input_transcribed_raw()
+```
 
-🧪 2. What Works (Verified Features)
+## 2. What Works (Verified Features)
 ✔ Intelligent interruption logic
 
-Agent only interrupts on meaningful human speech
+- Agent only interrupts on meaningful human speech
 
-Agent does NOT interrupt for:
+- Agent does NOT interrupt for:
 
 uh
 
