@@ -3,6 +3,11 @@ from __future__ import annotations
 import asyncio
 import copy
 import time
+from livekit.agents.extensions.filler_interrupt_handler import (
+    FillerAwareInterruptHandler,
+    InterruptConfig,
+)
+
 from collections.abc import AsyncIterable, Sequence
 from contextlib import AbstractContextManager, nullcontext
 from dataclasses import dataclass
@@ -369,6 +374,9 @@ class AgentSession(rtc.EventEmitter[EventTypes], Generic[Userdata_T]):
         self._recorded_events: list[AgentEvent] = []
         self._enable_recording: bool = False
         self._started_at: float | None = None
+        # filler-aware interruption handler
+        self.interrupt_handler = FillerAwareInterruptHandler(InterruptConfig())
+
 
         # ivr activity
         self._ivr_activity: IVRActivity | None = None
@@ -1164,6 +1172,9 @@ class AgentSession(rtc.EventEmitter[EventTypes], Generic[Userdata_T]):
             self._llm_error_counts = 0
             self._tts_error_counts = 0
 
+            self.interrupt_handler.on_tts_start()
+
+
             if self._agent_speaking_span is None:
                 self._agent_speaking_span = tracer.start_span("agent_speaking")
 
@@ -1174,6 +1185,7 @@ class AgentSession(rtc.EventEmitter[EventTypes], Generic[Userdata_T]):
                 # self._agent_speaking_span.set_attribute(trace_types.ATTR_START_TIME, time.time())
         elif self._agent_speaking_span is not None:
             # self._agent_speaking_span.set_attribute(trace_types.ATTR_END_TIME, time.time())
+            self.interrupt_handler.on_tts_end()
             self._agent_speaking_span.end()
             self._agent_speaking_span = None
 
@@ -1218,13 +1230,37 @@ class AgentSession(rtc.EventEmitter[EventTypes], Generic[Userdata_T]):
         old_state = self._user_state
         self._user_state = state
         self.emit("user_state_changed", UserStateChangedEvent(old_state=old_state, new_state=state))
+    
+    def _user_input_transcribed_raw(self, text: str):
+        """Calls the original transcription pipeline."""
+        ev = UserInputTranscribedEvent(text=text, is_final=True)
+        self.emit("user_input_transcribed", ev)
 
     def _user_input_transcribed(self, ev: UserInputTranscribedEvent) -> None:
-        if self.user_state == "away" and ev.is_final:
-            # reset user state from away to listening in case VAD has a miss detection
-            self._update_user_state("listening")
+        text = ev.text
+        confidence = getattr(ev, "confidence", 1.0)
+        is_final = ev.is_final
 
-        self.emit("user_input_transcribed", ev)
+        def stop_tts():
+            # interrupt TTS safely
+            try:
+                self.interrupt(force=True)
+            except Exception:
+                pass
+
+        def forward_to_nlu(user_text: str):
+            # Forward to existing user input pipeline
+            self._user_input_transcribed_raw(user_text)
+
+        # Use handler instead of default behavior
+        self.interrupt_handler.handle_transcript_segment(
+            text=text,
+            confidence=confidence,
+            is_final=is_final,
+            stop_agent_tts=stop_tts,
+            forward_to_nlu=forward_to_nlu,
+        )
+
 
     def _conversation_item_added(self, message: llm.ChatMessage) -> None:
         self._chat_ctx.insert(message)
