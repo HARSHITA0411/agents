@@ -80,7 +80,7 @@ _user_input_transcribed_raw()
 ---
 
 ## 2. What Works (Verified Features)
-1. Intelligent interruption logic
+1. **Intelligent interruption logic**
 
 - Agent only interrupts on meaningful human speech
 
@@ -98,7 +98,7 @@ _user_input_transcribed_raw()
 
     - low confidence noise
 
-2. Full compatibility with LiveKit session flow
+2. **Full compatibility with LiveKit session flow**
 
 - User speech correctly forwarded to LLM
 
@@ -106,7 +106,7 @@ _user_input_transcribed_raw()
 
 - No interference with VAD, STT, or TTS engines
 
-3. Toggle-safe design
+3. **Toggle-safe design**
 
 - TTS state is tracked properly
 
