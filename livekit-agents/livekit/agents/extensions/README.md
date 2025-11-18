@@ -112,7 +112,7 @@ Confidence scoring varies	Some STT providers send no confidence field	Uses fallb
 
 None of these break the agent, but may slightly reduce accuracy in rare cases.
 
-🚀 4. Steps to Test the Implementation
+## 4. Steps to Test the Implementation
 ✔ Step 1 — Launch a test agent
 
 Example:
@@ -144,9 +144,11 @@ Real speech	✔ Processed normally
 
 Enable logging to confirm TTS start/end signals.
 
+---
+
 ## 5. Environment Details
 
- # Python Version:
+### Python Version:
 
 Tested on Python 3.10+
 
@@ -157,7 +159,7 @@ Installed via:
 pip install "livekit-agents[openai,silero,deepgram,cartesia,turn-detector]"
 ```
 
-# Required Configurations:
+### Required Configurations:
 Environment variables depending on the chosen STT/LLM/TTS:
 
 ``` makefile
