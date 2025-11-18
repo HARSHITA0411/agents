@@ -82,37 +82,37 @@ _user_input_transcribed_raw()
 ## 2. What Works (Verified Features)
 1. **Intelligent interruption logic**
 
-- Agent only interrupts on meaningful human speech
-
-- Agent does NOT interrupt for:
-
-    - uh
-
-    - um
-
-    - hmm
-
-    - breath sounds
-
-    - partial phonemes
-
-    - low confidence noise
+    - Agent only interrupts on meaningful human speech
+    
+    - Agent does NOT interrupt for:
+    
+        - uh
+    
+        - um
+    
+        - hmm
+    
+        - breath sounds
+    
+        - partial phonemes
+    
+        - low confidence noise
 
 2. **Full compatibility with LiveKit session flow**
 
-- User speech correctly forwarded to LLM
-
-- Chat history preserved
-
-- No interference with VAD, STT, or TTS engines
+    - User speech correctly forwarded to LLM
+    
+    - Chat history preserved
+    
+    - No interference with VAD, STT, or TTS engines
 
 3. **Toggle-safe design**
 
-- TTS state is tracked properly
-
-- Silent → Listening transitions work
-
-- Filler detection works even for partial STT output
+    - TTS state is tracked properly
+    
+    - Silent → Listening transitions work
+    
+    - Filler detection works even for partial STT output
 
 ---
 
@@ -147,13 +147,13 @@ python myagent.py console
 
 | You Say        | Expected Behavior        |
 |----------------|---------------------------|
-| "uh..."        | ❌ No interruption        |
-| "umm..."       | ❌ No interruption        |
-| "hmm..."       | ❌ No interruption        |
-| breath noise   | ❌ No interruption        |
-| "hello?"       | ✔ Agent stops speaking   |
-| "wait wait"    | ✔ Agent interrupts       |
-| "stop"         | ✔ Instant interruption   |
+| "uh..."        |  No interruption        |
+| "umm..."       |  No interruption        |
+| "hmm..."       |  No interruption        |
+| breath noise   |  No interruption        |
+| "hello?"       |  Agent stops speaking   |
+| "wait wait"    |  Agent interrupts       |
+| "stop"         |  Instant interruption   |
 
 ---
 
