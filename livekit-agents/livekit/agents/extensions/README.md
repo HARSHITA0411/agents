@@ -34,7 +34,7 @@ livekit/agents/voice/agent_session.py
 
 Integrated the custom handler into the agent pipeline.
 
-** Added Import: **
+**Added Import:**
 ``` python
 from livekit.agents.extensions.filler_interrupt_handler import (
     FillerAwareInterruptHandler,
@@ -42,7 +42,7 @@ from livekit.agents.extensions.filler_interrupt_handler import (
 )
 ```
 
-** Instantiated Handler: **
+**Instantiated Handler:**
 
 Inside __init__():
 ``` python
