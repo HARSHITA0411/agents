@@ -80,41 +80,43 @@ _user_input_transcribed_raw()
 ---
 
 ## 2. What Works (Verified Features)
-✔ Intelligent interruption logic
+1. Intelligent interruption logic
 
 - Agent only interrupts on meaningful human speech
 
 - Agent does NOT interrupt for:
 
--- uh
+    - uh
 
--- um
+    - um
 
--- hmm
+    - hmm
 
--- breath sounds
+    - breath sounds
 
--- partial phonemes
+    - partial phonemes
 
--- low confidence noise
+    - low confidence noise
 
-✔ Full compatibility with LiveKit session flow
+2. Full compatibility with LiveKit session flow
 
-User speech correctly forwarded to LLM
+- User speech correctly forwarded to LLM
 
-Chat history preserved
+- Chat history preserved
 
-No interference with VAD, STT, or TTS engines
+- No interference with VAD, STT, or TTS engines
 
-✔ Toggle-safe design
+3. Toggle-safe design
 
-TTS state is tracked properly
+- TTS state is tracked properly
 
-Silent → Listening transitions work
+- Silent → Listening transitions work
 
-Filler detection works even for partial STT output
+- Filler detection works even for partial STT output
 
-⚠️ 3. Known Issues / Edge Cases
+---
+
+## 3. Known Issues / Edge Cases
 Issue	Description	Impact
 Partial filler detection	Some STT engines output phonemes like "uh-"	Might pass as non-filler
 Accented fillers	Non-English fillers not supported	Requires language-specific lists
