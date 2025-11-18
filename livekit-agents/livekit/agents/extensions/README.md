@@ -34,7 +34,7 @@ livekit/agents/voice/agent_session.py
 
 Integrated the custom handler into the agent pipeline.
 
-**Added Import:**
+-**Added Import:**
 ``` python
 from livekit.agents.extensions.filler_interrupt_handler import (
     FillerAwareInterruptHandler,
@@ -42,13 +42,13 @@ from livekit.agents.extensions.filler_interrupt_handler import (
 )
 ```
 
-**Instantiated Handler:**
+-**Instantiated Handler:**
 
 Inside __init__():
 ``` python
 self.interrupt_handler = FillerAwareInterruptHandler(InterruptConfig())
 ```
-✔ Hooked into Agent TTS State
+-**Hooked into Agent TTS State:**
 
 Inside _update_agent_state():
 
@@ -58,7 +58,7 @@ self.interrupt_handler.on_tts_start()
 self.interrupt_handler.on_tts_end()
 ```
 
-✔ Replaced Default STT Handling
+-**Replaced Default STT Handling:**
 
 Overrode _user_input_transcribed() so all transcripts pass through the new logic:
 
@@ -77,6 +77,7 @@ Added helper for passing final text to LiveKit:
 ``` python
 _user_input_transcribed_raw()
 ```
+---
 
 ## 2. What Works (Verified Features)
 ✔ Intelligent interruption logic
@@ -85,17 +86,17 @@ _user_input_transcribed_raw()
 
 - Agent does NOT interrupt for:
 
-uh
+--uh
 
-um
+--um
 
-hmm
+--hmm
 
-breath sounds
+--breath sounds
 
-partial phonemes
+--partial phonemes
 
-low confidence noise
+--low confidence noise
 
 ✔ Full compatibility with LiveKit session flow
 
